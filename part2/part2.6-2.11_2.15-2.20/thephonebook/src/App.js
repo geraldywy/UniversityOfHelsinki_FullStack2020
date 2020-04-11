@@ -59,9 +59,11 @@ const App = () => {
       .addNew({name:newName, number:newNumber})
       .then(response=>{
         setPersons(persons.concat(response))
-      }
-      )
-      handleNotification({Notification:`Added ${newName} successfully`, success:true})
+        handleNotification({Notification:`Added ${newName} successfully`, success:true})
+      })
+      .catch(error=>{
+        handleNotification({Notification:`failed: ${error.response.data}`, success:false})
+      })
     }
     setNewName('')
     setNewNumber('')
