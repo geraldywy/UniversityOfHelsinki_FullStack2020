@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdnZyIsImlkIjoiNWVhMTU3ZjQ3ZDhlNWEyYWVjZjM5ZWUxIiwiaWF0IjoxNTg3NjMyMjAyfQ.Su3Oie-X4awBeKDzYR4e6qAjsiyMJ8vscRj6olLskP8
+
+{
+    "title": "and another one",
+    "author": "dj khaled",
+    "url": "www.notreal12.com",
+    "likes": 999
+}
