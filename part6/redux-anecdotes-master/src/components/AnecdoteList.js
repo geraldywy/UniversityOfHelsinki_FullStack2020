@@ -1,14 +1,13 @@
 import React from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {connect} from 'react-redux'
 import {createVote} from '../reducers/anecdoteReducer'
+import {upvoteNotif} from '../reducers/notificationReducer'
 
-const AnecdoteList = () => {
+const AnecdoteList = (props) => {
 
-    const dispatch = useDispatch()
-
-    const upvote = (id) => {
-        console.log('upvote')
-        dispatch(createVote(id))
+    const upvote = ({id, message}) => {
+        props.createVote(id)
+        props.upvoteNotif(message, 10)
     }
 
     const Anecdote = ({anecdote, handleClick}) => (
@@ -23,16 +22,30 @@ const AnecdoteList = () => {
         </div>
     )
 
-    const anecdotes = useSelector(state=>state)
-    console.log(anecdotes)
+    const anecdotes = props.anecdotes
+    const filterTag = props.filter.toLowerCase()
     return (
         <div>
             <h2>Anecdotes</h2>
-            {anecdotes.sort((a, b)=>b.votes-a.votes).map(anecdote =>
-                <Anecdote key={anecdote.id} anecdote={anecdote} handleClick={()=>upvote(anecdote.id)} />
+            {anecdotes.sort((a, b)=>b.votes-a.votes).filter(anecdote=>anecdote.content.toLowerCase().includes(filterTag)).map(anecdote =>
+                <Anecdote key={anecdote.id} anecdote={anecdote} handleClick={()=>upvote({id:anecdote.id, message:anecdote.content})} />
             )}
         </div>
     )
 }
 
-export default AnecdoteList
+const mapStateToProps = (state) => {
+    console.log(state)
+    return {
+      anecdotes: state.anecdotes,
+      filter: state.filter
+    }
+  }
+
+const mapDispatchToProps = {
+    createVote,
+    upvoteNotif
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(AnecdoteList)

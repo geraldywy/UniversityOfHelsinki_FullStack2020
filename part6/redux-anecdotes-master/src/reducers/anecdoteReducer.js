@@ -1,59 +1,54 @@
-const anecdotesAtStart = [
-  'If it hurts, do it more often',
-  'Adding manpower to a late software project makes it later!',
-  'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
-  'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
-  'Premature optimization is the root of all evil.',
-  'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
-]
-
-const getId = () => (100000 * Math.random()).toFixed(0)
-
-const asObject = (anecdote) => {
-  return {
-    content: anecdote,
-    id: getId(),
-    votes: 0
-  }
-}
-
-const initialState = anecdotesAtStart.map(asObject)
+import anecdoteService from '../services/anecdotes'
 
 export const createAnecdote = (anecdote) => {
-  return {
-    type: 'create',
-    content: anecdote
+
+  return async (dispatch) => {
+    const newAnecdote = await anecdoteService.addNew(anecdote)
+    dispatch({
+        type: 'create',
+        anecdote: newAnecdote
+      }
+    )}
+}
+export const createVote = (id) => {
+  
+  return async (dispatch) => {
+    const upvotedAnecdote = await anecdoteService.upvote(id)
+    dispatch({
+      type: 'vote',
+      id,
+      upvotedAnecdote
+    })
   }
 }
 
-export const createVote = (id) => {
-  return {
-    type: 'vote',
-    id: id
-    }
+export const initAnecdote = ()=>{
+  return async (dispatch) => {
+    const anecdotes = await anecdoteService.getAll()
+    dispatch({
+      type: 'INIT',
+      anecdotes
+    })
+  }
 }
 
-const reducer = (state = initialState, action) => {
+
+const noteReducer = (state = [], action) => {
   switch(action.type){
     case 'vote':{
-      const anecdoteToVote = state.find(a=>a.id===action.id)
-      const anecdoteUpvoted = {
-        ...anecdoteToVote,
-        votes: anecdoteToVote.votes+1
-      }
-      return state.map(a=>a.id===action.id ? anecdoteUpvoted: a)
+      return state.map(a=>a.id===action.id ? action.upvotedAnecdote: a)
     }
 
     case 'create':{
-      return [...state, {
-        content: action.content,
-        id: getId(),
-        votes: 0
-      }]
+      return [...state, action.anecdote]
+    }
+
+    case 'INIT': {
+      return action.anecdotes
     }
 
     default: return state
   }
 }
 
-export default reducer
+export default noteReducer
