@@ -1,6 +1,5 @@
-  
-import React, {useState} from 'react'
-import {ALL_AUTHORS, ALL_BOOKS_NO_GENRE} from '../queries'
+  import React, {useState} from 'react'
+import {ALL_AUTHORS, ALL_BOOKS} from '../queries'
 import { useQuery, useMutation } from '@apollo/client'
 import {UPDATE_AUTHOR} from '../mutations'
 import Select from 'react-select'
@@ -15,7 +14,7 @@ const Authors = (props) => {
         query: ALL_AUTHORS
       },
       {
-        query: ALL_BOOKS_NO_GENRE
+        query: ALL_BOOKS
       }
     ],
     onError: (error)=>{
@@ -53,7 +52,6 @@ const Authors = (props) => {
       label: author.name
     }
   })
-  console.log(name, born)
   
   return (
     <div>
@@ -78,11 +76,15 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
-      <form onSubmit={submitUpdateAuthor}>
+
+      {props.token ? <form onSubmit={submitUpdateAuthor}>
         <Select onChange={({value})=>setName(value)} options={authorsOption}/>
         born <input type='number' value={born} onChange={({target})=>setBorn(target.value)} />
         <button type='submit'>update author</button>
       </form>
+      : null  
+      }
+      
     </div>
   )
 }
